@@ -21,10 +21,10 @@ NB. by default, the file created will be named "asmd.csv". DO NOT CHANGE THIS!
 
 2. upload creeps.sty (found in this repository) to your project. 
 
-3. scroll to the place in your .tex file where you put your bibliography. In the line above this (or, wherever you want the names of the offenders to be displayed), put the following: \creeps{path_to_my_bibfile}
+3. scroll to the place in your .tex file where you put your bibliography. In the line above this (or, wherever you want the names of the offenders to be displayed), put the following: `\creeps{path_to_my_bibfile}`
 
-\texttt{\creeps} takes two optional arguments, the first is a comma-separated string of .bib entries you wish to exclude from being flagged. Set the second to 'false' if you do not want a reminder to update your link to the offenders database if you have not done so in the preceding 100 days. Options included, it looks like: \texttt{\creeps{mybibfile}[exception1, exception2][false]}
+`\creeps{}` takes two optional arguments, the first is a comma-separated string of .bib entries you wish to exclude from being flagged. Set the second to 'false' if you do not want a reminder to update your link to the offenders database if you have not done so in the preceding 100 days. Options included, it looks like: `\creeps{mybibfile}[exception1, exception2][false]`
 
 **Roadmap**
 
-Unfortunately, creeps is currently only available on overleaf. A package is in the works which will be available for all users (creeps uses a python script to scrape a publicly available database of convicted offenders. I am currently working on a parsimonious, offline version with a focus on ease of use -- I want creeps to be set and forget, with no start up costs. For those comfortable incorporating python in their latex lives, the python script, and links to the database are all in this repository.)
+Unfortunately, creeps is currently only available on overleaf. A package is in the works which will be available for all users (creeps uses a python script to scrape a publicly available database of convicted offenders. I am currently working on a parsimonious, offline version with a focus on ease of use. For those comfortable incorporating python in their latex lives, the .py file is available in this repository.)
