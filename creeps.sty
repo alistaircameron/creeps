@@ -1,15 +1,111 @@
 % Package users acknowledge the following: I understand that this package provides a probabilistic match between names found in my .bib file and publicly available lists of individuals accused of, or convicted of sexual harassment and/or other academic misconduct. It is my responsibility to verify the information provided in these databases, to ensure that the match is accurate, and I am entirely responsible for any action I take as a result of learning of the match. I acknowledge that the package authors guarantee neither the accuracy of the lists, nor the accuracy of the match between .bib files and the list. I am aware that the original data source can be found here: https://academic-sexual-misconduct-database.org/
 
-% this project can be freely used and redistributed. 
-
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
 \ProvidesPackage{creeps}
-  [2011/01/11 v0.01 LaTeX package for my own purpose]
 
 \RequirePackage{xcolor}
 \RequirePackage{hyperref}
-\newcommand{\hi}{Hello, this is my own package}
-\let\myDate\date
-\newcommand\GoodBye[1][\bfseries]{{#1Good Bye}}
 
+% creeps.txt is the main python file.
+\begin{filecontents*}{creeps.txt} 
+import sys 
+if not filepath.endswith(".bib"):
+    filepath = filepath + ".bib"
+class keyauthor:
+    def __init__(self, keys = [], authors = []):
+        self.keys = keys
+        self.authors = authors
+
+    def update(self, line):
+        if line.strip().startswith("@"):
+            self.keys.append(line.strip().split("{")[1].rstrip(',').strip().lower() )
+        elif line.strip().split("=")[0].lower().__contains__("author"):
+            self.authors.append(line.strip().split("{")[1].split("}")[0].split(" and "))
+ka = keyauthor()
+try:
+    with open(filepath) as refs:
+        for line in refs:
+            ka.update(line)
+except:
+    print("\PackageError{creeps}{Ooops. Your bibfile was not found}{If your bibfile isn't in the same folder as your .tex file, use a relative filepath.}")
+    sys.exit()
+if len(ka.authors) == 0:
+    sys.exit()
+exceptions = [x.strip() for x in exceptions.split(',')]
+for x in exceptions:
+    try:
+        pm = ka.keys.index(x)
+        ka.keys.pop(pm)
+        ka.authors.pop(pm)
+    except:
+        pass
+for i in range(len(ka.authors)):
+    ka.authors[i] = [x.split(",")[1].strip().lower() + " " + x.split(",")[0].strip().lower() 
+                  if x.__contains__(",") 
+                  else x 
+                  for x in ka.authors[i]
+                  ]
+names = [item.lower() for sublist in ka.authors for item in sublist]
+bibd = dict(zip(ka.keys, ka.authors))
+entries = []
+try:
+    with open('asmd.csv', 'r') as file:
+        for line in file.readlines():
+            entries.append([x.strip() for x in line.split('\t')])
+except:
+    print("\PackageError{creeps}{Ooops. asmd.csv was not found}{Import it from: https://raw.githubusercontent.com/alistaircameron/creeps/main/asmd.csv}")
+    sys.exit()
+if update.strip().lower() != 'false':
+    if (datetime.strptime(entries[-1][0], "%Y-%m-%d").date() - date.today()).days > 90:
+        print("\PackageWarningNoLine{creeps}{You have not updated the offenders database in 3+ months. To do so, navigate to asmd.csv, and click refresh}")
+entries = entries[:-1]
+offenders, institutions, sources = zip(*entries)
+offd = dict(zip(offenders, zip(institutions, sources)))
+warnings = set([name for name in names if name in offenders])
+article_ids, institutions, sources = [], [], []
+for w in warnings:
+    art_id = []
+    for k, v in bibd.items():
+        if w in v:
+            art_id.append(k)
+
+    article_ids.append(art_id)
+
+    for k, v in offd.items():
+        if k == w:
+            institutions.append(offd.get(w)[0])
+            sources.append(offd.get(w)[1])
+print("\color{red}")
+print("\\begin{itemize}")
+for i in range(len(warnings)):
+    message = f"{list(warnings)[i]} ({institutions[i]}; {', '.join(article_ids[i])}) is matched to the database of offenders. For details, see " 
+    print("\item", message)
+    for k, j in enumerate(sources[i].split(";")):
+        if k != len(sources[i].split(";")) -1:
+            details = f"\href{{{j}}}{{here}}, "
+            print(details)
+        else:
+            details = f"\href{{{j}}}{{here}}."
+            print(details)
+    print('\n')    
+print("\end{itemize}")
+print("\color{black}")
+\end{filecontents*}
+
+\newwrite\creepswriteout
+\NewDocumentCommand{\creepsconfigs}{mO{exceptions}O{true}}{
+	{
+		\gdef\writecreep##1##2##3{
+			\immediate\openout\creepswriteout=creepsconfigs.txt\relax
+			\immediate\write\creepswriteout{\detokenize{filepath, exceptions, update = "##1", "##2", "##3"}}
+			\immediate\closeout\creepswriteout
+	}}	
+	\writecreep{#1}{#2}{#3}
+}
+
+\NewDocumentCommand{\creeps}{mO{exceptions}O{checkforupdates}}{
+\creepsconfigs{#1}[#2][#3]
+\immediate\write18{cat creepsconfigs.txt creeps.txt > creeps.py}
+\input{|python creeps.py}
+}
 \endinput
