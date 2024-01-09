@@ -63,32 +63,33 @@ entries = entries[:-1]
 offenders, institutions, sources = zip(*entries)
 offd = dict(zip(offenders, zip(institutions, sources)))
 warnings = set([name for name in names if name in offenders])
-article_ids, institutions, sources = [], [], []
-for w in warnings:
-	art_id = []
-	for k, v in bibd.items():
-		if w in v:
-			art_id.append(k)
-	article_ids.append(art_id)
-	for k, v in offd.items():
-		if k == w:
-			institutions.append(offd.get(w)[0])
-			sources.append(offd.get(w)[1])
-print("\color{red}")
-print("\\begin{itemize}")
-for i in range(len(warnings)):
-	message = f"{list(warnings)[i]} ({institutions[i]}; {', '.join(article_ids[i])}) is matched to the database of offenders. For details, see " 
-	print("\item", message)
-	for k, j in enumerate(sources[i].split(";")):
-		if k != len(sources[i].split(";")) -1:
-			details = f"\href{{{j}}}{{here}}, "
-			print(details)
-		else:
-			details = f"\href{{{j}}}{{here}}."
-			print(details)
-	print('\n')    
-print("\end{itemize}")
-print("\color{black}")
+if len(warnings) > 0:
+	article_ids, institutions, sources = [], [], []
+	for w in warnings:
+		art_id = []
+		for k, v in bibd.items():
+			if w in v:
+				art_id.append(k)
+		article_ids.append(art_id)
+		for k, v in offd.items():
+			if k == w:
+				institutions.append(offd.get(w)[0])
+				sources.append(offd.get(w)[1])
+	print("\color{red}")
+	print("\\begin{itemize}")
+	for i in range(len(warnings)):
+		message = f"{list(warnings)[i]} ({institutions[i]}; {', '.join(article_ids[i])}) is matched to the database of offenders. For details, see " 
+		print("\item", message)
+		for k, j in enumerate(sources[i].split(";")):
+			if k != len(sources[i].split(";")) -1:
+				details = f"\href{{{j}}}{{here}}, "
+				print(details)
+			else:
+				details = f"\href{{{j}}}{{here}}."
+				print(details)
+		print('\n')    
+	print("\end{itemize}")
+	print("\color{black}")
 \end{filecontents*}
 
 \newwrite\creepswriteout
