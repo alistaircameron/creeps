@@ -23,9 +23,9 @@ NB. by default, the file created will be named "asmd.csv". DO NOT CHANGE THIS!
 
 NB. by default, the file created will be named "creeps.sty". DO NOT CHANGE THIS!
 
-3. Load creeps as you would any other package (`\usepackage{creeps}`), then scroll to the place in your .tex file where you put your bibliography. In the line above this (or, wherever you want the names of the offenders to be displayed), put the following: `\creeps{path_to_my_bibfile}` (replace "path_to_my_bibfile" with the name of you .bib file).
+3. Load creeps as you would any other package (`\usepackage{creeps}`), then scroll to the place in your .tex file where you put your bibliography. In the line above this (or, wherever you want the names of the offenders to be displayed), put the following: `\creeps{path_to_my_bibfile}` (replace "path_to_my_bibfile" with the name of your .bib file).
 
-`\creeps{}` takes two optional arguments, the first is a comma-separated string of .bib entries you wish to exclude from being flagged. Set the second to 'false' if you do not want a reminder to update your link to the offenders database if you have not done so in the preceding 100 days. Options included, it looks like: `\creeps{mybibfile}[exception1, exception2][false]`
+`\creeps{}` takes two optional arguments, the first is a comma-separated string of .bib entries you wish to exclude from being flagged. Set the second to 'false' if you do not want a reminder to update your link to the offenders database if you have not done so in the preceding 100 days (ASMD regularly update their database, to get an updated version, click on asmd.cvs inside your overleaf file, and then click refresh). Options included, it looks like: `\creeps{mybibfile}[exception1, exception2][false]`
 
 **Roadmap**
 
