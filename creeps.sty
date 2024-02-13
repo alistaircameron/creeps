@@ -15,12 +15,11 @@ class keyauthor:
 	def __init__(self, keys = [], authors = []):
 		self.keys = keys
 		self.authors = authors
-
 	def update(self, line):
 		if line.strip().startswith("@"):
 			self.keys.append(line.strip().split("{")[1].rstrip(',').strip().lower() )
 		elif line.strip().split("=")[0].lower().__contains__("author"):
-			self.authors.append(line.strip().split("{")[1].split("}")[0].split(" and "))
+			self.authors.append(line.strip().split("{",1)[1].rsplit("}", 1)[0].split(" and "))
 ka = keyauthor()
 try:
 	with open(filepath) as refs:
@@ -39,13 +38,24 @@ for x in exceptions:
 		ka.authors.pop(pm)
 	except:
 		pass
+single_purpose = ["\\L", "\\l", "\\O", "\\o", "\\AA", "\\aa", "\\AE", "\\ae", "\\OE", "\\oe", "\\ss", "\\i", "\\j"]
+sp = {"\\l" : 'l', "\\O" : "O", "\\o" : 'o', "\\aa" : 'a', "\\ae" : 'ae', "\\oe" : 'oe', "\\ss" : 'ss', "\\i" : 'i', "\\j" : 'j'}
+multi_purpose = ["\\t", "\\b", "\\d", "\\c", "\\H", "\\v", "\\r", "\\u", '\\"', "\\.", "\\=", "\\~" , "\\^", "\\'", "\\`"]
+mp = [x.lower() for x in multi_purpose]
+def cleanup(name, mp=mp, sp=sp):
+	name = name.replace("{","").replace("}","")
+	for l in mp:
+		name = name.replace(l,"")
+	for k, v in sp.items():
+		name = name.replace(k,v)
+	return(name)
 for i in range(len(ka.authors)):
-	ka.authors[i] = [x.split(",")[1].strip().lower() + " " + x.split(",")[0].strip().lower() 
+	ka.authors[i] = [cleanup(x.split(",")[1].strip().lower() + " " + x.split(",")[0].strip().lower())
 					if x.__contains__(",") 
-					else x 
+					else cleanup(x) 
 					for x in ka.authors[i]
 					]
-names = [item.lower() for sublist in ka.authors for item in sublist]
+names = [item for sublist in ka.authors for item in sublist]
 bibd = dict(zip(ka.keys, ka.authors))
 entries = []
 try:
@@ -78,7 +88,7 @@ if len(warnings) > 0:
 	print("\color{red}")
 	print("\\begin{itemize}")
 	for i in range(len(warnings)):
-		message = f"{list(warnings)[i]} ({institutions[i]}; {', '.join(article_ids[i])}) is matched to the database of offenders. For details, see " 
+		message = f"{list(warnings)[i]} ({institutions[i]}; {', '.join(article_ids[i])}) is matched to the database of offenders. For details, see "
 		print("\item", message)
 		for k, j in enumerate(sources[i].split(";")):
 			if k != len(sources[i].split(";")) -1:
